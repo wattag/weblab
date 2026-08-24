@@ -53,4 +53,9 @@ class User extends Authenticatable
         return $this->role === UserRoleEnum::Teacher;
     }
 
+    public function getFullName(): string
+    {
+        return $this->name .' '. $this->surname;
+    }
+
 }
