@@ -24,9 +24,9 @@ enum SubmissionStatusEnum: int implements HasLabel, HasColor
     public function getLabel(): string|Htmlable|null
     {
         return match($this) {
-            self::Pending => 'Рассматривается',
+            self::Pending => 'Отправлено на проверку',
             self::Accepted => 'Принято',
-            self::Rejected => 'Отменено',
+            self::Rejected => 'Возвращено на доработку',
         };
     }
 }

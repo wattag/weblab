@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'surname' => 'Админов',
             'patronymic' => 'Админович' ,
             'name' => 'Админ',
-            'email' => 'admin@weblab.local',
+            'email' => 'admin@admin.com',
             'password' => bcrypt('password'),
             'role' => UserRoleEnum::Teacher,
             'group_id' => null,
