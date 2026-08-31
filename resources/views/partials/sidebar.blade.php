@@ -2,7 +2,7 @@
 
 <aside class="hidden md:flex flex-col w-64 shrink-0 h-full border-r-2 border-slate-800/60 bg-slate-950 p-4 justify-between z-10">
     <div>
-        <a href="{{ url('/') }}" class="flex items-center gap-3 px-2 py-4 mb-6 hover:opacity-80 transition">
+        <a href="{{ url('/dashboard') }}" class="flex items-center gap-3 px-2 py-4 mb-6 hover:opacity-80 transition">
             <div class="w-12 h-12 flex items-center justify-center text-white font-black text-xl">
                 <img src="{{ asset('logo.ico') }}" alt="Логотип">
             </div>
@@ -11,10 +11,12 @@
 
         <nav class="flex flex-col gap-2">
             @auth
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl font-bold uppercase tracking-wide text-sm transition {{ request()->routeIs('dashboard') ? 'bg-violet-500/10 text-violet-400 border-2 border-violet-500/20' : 'text-slate-500 border-2 border-transparent hover:bg-slate-900' }}">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    Мой профиль
-                </a>
+                @if(auth()->user()->role === UserRoleEnum::Student)
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl font-bold uppercase tracking-wide text-sm transition {{ request()->routeIs('dashboard') ? 'bg-violet-500/10 text-violet-400 border-2 border-violet-500/20' : 'text-slate-500 border-2 border-transparent hover:bg-slate-900' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        Мой профиль
+                    </a>
+                @endif
 
                 <a href="{{ route('theory') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl font-bold uppercase tracking-wide text-sm transition {{ request()->routeIs('theory') ? 'bg-indigo-500/10 text-indigo-400 border-2 border-indigo-500/20' : 'text-slate-500 border-2 border-transparent hover:bg-slate-900' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>

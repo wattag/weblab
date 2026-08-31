@@ -14,7 +14,8 @@ class Submission extends Model
         'github_url',
         'status',
         'teacher_comment',
-        'grade'
+        'grade',
+        'file_path'
     ];
 
     protected function casts(): array

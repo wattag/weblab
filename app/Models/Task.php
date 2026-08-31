@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TaskSubmissionTypeEnum;
 use App\Enums\TaskTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,8 +15,20 @@ class Task extends Model
         'type',
         'content',
         'deadline_at',
-        'group_id'
+        'group_id',
+        'submission_type',
+        'discipline_id',
+        'teacher_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => TaskTypeEnum::class,
+            'submission_type' => TaskSubmissionTypeEnum::class,
+            'deadline_at' => 'datetime',
+        ];
+    }
 
     public function group(): BelongsTo
     {
@@ -27,11 +40,13 @@ class Task extends Model
         return $this->hasMany(Submission::class);
     }
 
-    protected function casts(): array
+    public function discipline(): BelongsTo
     {
-        return [
-            'type' => TaskTypeEnum::class,
-            'deadline_at' => 'datetime',
-        ];
+        return $this->belongsTo(Discipline::class);
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
     }
 }
