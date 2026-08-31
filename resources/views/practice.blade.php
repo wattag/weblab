@@ -17,7 +17,7 @@
 @endphp
 
 @extends('layouts.main')
-@section('title', 'Практика | ' . config('app.name', 'WebLab'))
+@section('title', 'Практика - ' . config('app.name', 'WebLab'))
 
 @section('content')
     <div class="w-full">

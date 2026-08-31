@@ -8,7 +8,7 @@
 @endphp
 
 @extends('layouts.main')
-@section('title', $task->title . ' | ' . config('app.name', 'WebLab'))
+@section('title', $task->title . ' - ' . config('app.name', 'WebLab'))
 
 @section('content')
     <div class="max-w-4xl mx-auto py-6 sm:py-10">
