@@ -13,15 +13,12 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
     public function run(): void
     {
-        Group::create(['name' => 'ПИ-22']);
-        Group::create(['name' => 'ИВТ-23']);
-
         User::create([
-            'surname' => 'Админов',
-            'patronymic' => 'Админович' ,
-            'name' => 'Админ',
-            'email' => 'admin@admin.com',
-            'password' => bcrypt('password'),
+            'surname' => 'Литвинов',
+            'patronymic' => 'Илья' ,
+            'name' => 'Васильевич',
+            'email' => 'litvinov374@gmail.com',
+            'password' => bcrypt('Qwe123456+'),
             'role' => UserRoleEnum::Teacher,
             'group_id' => null,
         ]);
