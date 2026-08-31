@@ -26,11 +26,11 @@
                     Перейти к учебным материалам
                 </a>
             @else
-                <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black uppercase tracking-widest rounded-2xl border-2 border-violet-500 border-b-4 border-b-violet-700 hover:border-b-violet-600 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-600/30 active:border-b-0 active:translate-y-1 transition-all duration-200 text-center">
-                    Регистрация
-                </a>
-                <a href="{{ route('login') }}" class="w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-black uppercase tracking-widest rounded-2xl border-2 border-slate-700 border-b-4 border-b-slate-600 hover:-translate-y-1 hover:shadow-xl active:border-b-0 active:translate-y-1 transition-all duration-200 text-center">
-                    Войти
+{{--                <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black uppercase tracking-widest rounded-2xl border-2 border-violet-500 border-b-4 border-b-violet-700 hover:border-b-violet-600 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-600/30 active:border-b-0 active:translate-y-1 transition-all duration-200 text-center">--}}
+{{--                    Регистрация--}}
+{{--                </a>--}}
+                <a href="{{ route('login') }}" class="w-full sm:w-auto px-10 py-4 bg-violet-600 hover:bg-violet-500 text-white font-black uppercase tracking-widest rounded-2xl border-2 border-violet-500 border-b-4 border-b-violet-700 hover:border-b-violet-600 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-900/20 active:border-b-0 active:translate-y-1 transition-all duration-200 text-center">
+                    Войти в платформу
                 </a>
             @endauth
         </div>

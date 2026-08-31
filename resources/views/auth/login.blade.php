@@ -42,12 +42,12 @@
                 Войти
             </button>
 
-            <p class="text-center text-sm font-bold text-slate-500 dark:text-slate-400">
-                Нет аккаунта?
-                <a href="{{ route('register') }}" class="text-violet-500 hover:text-violet-400 transition-colors">
-                    Зарегистрироваться
-                </a>
-            </p>
+{{--            <p class="text-center text-sm font-bold text-slate-500 dark:text-slate-400">--}}
+{{--                Нет аккаунта?--}}
+{{--                <a href="{{ route('register') }}" class="text-violet-500 hover:text-violet-400 transition-colors">--}}
+{{--                    Зарегистрироваться--}}
+{{--                </a>--}}
+{{--            </p>--}}
         </div>
     </form>
 </x-guest-layout>
