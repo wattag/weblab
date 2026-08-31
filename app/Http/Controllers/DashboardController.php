@@ -2,23 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\SubmissionStatusEnum;
-use App\Enums\TaskTypeEnum;
+use App\Enums\UserRoleEnum;
+use App\Models\Discipline;
 use App\Models\Task;
+use App\Enums\TaskTypeEnum;
+use App\Enums\SubmissionStatusEnum;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    private function getStudentDisciplineIds($user): array
+    {
+        if (!$user->group) {
+            return [];
+        }
+        return $user->group->disciplines()->pluck('disciplines.id')->toArray();
+    }
+
     public function index()
     {
         $user = Auth::user();
+
+        if ($user->role === UserRoleEnum::Teacher) {
+            return redirect()->to('/admin');
+        }
+
+        $disciplineIds = $this->getStudentDisciplineIds($user);
 
         $acceptedCount = $user->submissions()->where('status', SubmissionStatusEnum::Accepted)->count();
         $pendingCount = $user->submissions()->where('status', SubmissionStatusEnum::Pending)->count();
         $rejectedCount = $user->submissions()->where('status', SubmissionStatusEnum::Rejected)->count();
 
+        // Базовый запрос для задач
         $deadlineTasksQuery = Task::where('type', TaskTypeEnum::Practice)
+            ->whereIn('discipline_id', $disciplineIds) // <--- ОГРАНИЧЕНИЕ ПО ДИСЦИПЛИНАМ
             ->where(function ($query) use ($user) {
                 $query->where('group_id', $user->group_id)
                     ->orWhereNull('group_id');
@@ -47,37 +65,63 @@ class DashboardController extends Controller
         return view('dashboard', compact('acceptedCount', 'pendingCount', 'rejectedCount', 'upcomingTasks', 'overdueTasks'));
     }
 
-    public function theory(): View
+    public function theory(Request $request)
+    {
+        return view('theory', $this->getTasksAndDisciplines(
+            [TaskTypeEnum::Theory, TaskTypeEnum::Manual],
+            $request
+        ));
+    }
+
+    public function practice(Request $request)
+    {
+        return view('practice', $this->getTasksAndDisciplines(
+            [TaskTypeEnum::Practice, TaskTypeEnum::Lab, TaskTypeEnum::Assignment],
+            $request,
+            withSubmissions: true
+        ));
+    }
+
+    /**
+     * @return array{tasks: \Illuminate\Support\Collection, disciplines: \Illuminate\Support\Collection}
+     */
+    private function getTasksAndDisciplines(array $types, Request $request, bool $withSubmissions = false): array
     {
         $user = Auth::user();
 
-        $tasks = Task::where(function ($query) use ($user) {
-            $query->where('group_id', $user->group_id)
-                ->orWhereNull('group_id');
-        })
-            ->where('type', TaskTypeEnum::Theory)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Task::whereIn('type', $types);
 
-        return view('theory', compact('tasks'));
+        if ($withSubmissions) {
+            $query->with(['submissions' => function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }]);
+        }
+
+        if ($user->role === UserRoleEnum::Teacher) {
+            $query->where('teacher_id', $user->id);
+
+            $disciplineIds = Task::where('teacher_id', $user->id)
+                ->pluck('discipline_id')
+                ->unique();
+
+            $disciplines = Discipline::whereIn('id', $disciplineIds)->get();
+        } else {
+            $disciplines = $user->group?->disciplines ?? collect();
+            $disciplineIds = $disciplines->pluck('id')->toArray();
+
+            $query->whereIn('discipline_id', $disciplineIds)
+                ->where(function ($q) use ($user) {
+                    $q->where('group_id', $user->group_id)
+                        ->orWhereNull('group_id');
+                });
+        }
+
+        if ($request->filled('discipline')) {
+            $query->where('discipline_id', $request->discipline);
+        }
+
+        $tasks = $query->orderByDesc('created_at')->get();
+
+        return compact('tasks', 'disciplines');
     }
-
-    public function practice(): View
-    {
-        $user = Auth::user();
-
-        $tasks = Task::where(function ($query) use ($user) {
-            $query->where('group_id', $user->group_id)
-                ->orWhereNull('group_id');
-        })
-            ->where('type', TaskTypeEnum::Practice)
-            ->orderBy('created_at', 'desc')
-            ->with(['submissions' => function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
-            ->get();
-
-        return view('practice', compact('tasks'));
-    }
-
 }

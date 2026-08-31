@@ -3,11 +3,16 @@
 namespace App\Filament\Resources\Submissions\Schemas;
 
 use App\Enums\SubmissionStatusEnum;
+use App\Models\Submission;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class SubmissionForm
 {
@@ -27,9 +32,24 @@ class SubmissionForm
                         ->disabled(),
 
                     TextInput::make('github_url')
-                        ->label('Ссылка на GitHub')
+                        ->label('Ссылка студента')
                         ->url()
-                        ->columnSpanFull(),
+                        ->disabled(),
+
+                    TextEntry::make('no_file')
+                        ->label('Прикрепленный файл')
+                        ->state('Студент прислал только ссылку (файла нет)')
+                        ->visible(fn (?Submission $record) => ! $record || ! $record->file_path),
+
+                    Actions::make([
+                        Action::make('download_file')
+                            ->label('Скачать прикрепленный файл')
+                            ->icon('heroicon-m-arrow-down-tray')
+                            ->url(fn (Submission $record) => Storage::url($record->file_path))
+                            ->openUrlInNewTab()
+                            ->visible(fn (?Submission $record) => $record && $record->file_path)
+                    ])
+                    ->columnSpanFull()
                 ])->columns(),
 
                 Section::make('Оценка преподавателя')->schema([

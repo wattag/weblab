@@ -6,25 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Group extends Model
+class Discipline extends Model
 {
-    protected $fillable = [
-        'name'
-    ];
+    protected $fillable = ['name'];
 
-    public function users(): HasMany
+    public function groups(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(Group::class);
     }
 
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
     }
-
-    public function disciplines(): BelongsToMany
-    {
-        return $this->belongsToMany(Discipline::class);
-    }
-
 }

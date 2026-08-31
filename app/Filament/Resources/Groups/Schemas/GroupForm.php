@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Groups\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -13,6 +14,12 @@ class GroupForm
             ->components([
                 TextInput::make('name')
                     ->label('Наименование группы'),
+
+                Select::make('disciplines')
+                    ->label('Изучаемые дисциплины')
+                    ->relationship('disciplines', 'name')
+                    ->multiple()
+                    ->preload(),
             ]);
     }
 }

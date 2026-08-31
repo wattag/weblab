@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Tasks\Tables;
+namespace App\Filament\Resources\Disciplines\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -9,34 +9,16 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class TasksTable
+class DisciplinesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('type')
-                    ->label('Тип')
-                    ->badge()
+                TextColumn::make('name')
+                    ->label('Наименование дисциплины')
+                    ->searchable()
                     ->sortable(),
-
-                TextColumn::make('discipline.name')
-                    ->label('Дисциплина')
-                    ->sortable(),
-
-                TextColumn::make('title')
-                    ->label('Название')
-                    ->searchable(),
-
-                TextColumn::make('group.name')
-                    ->label('Группа')
-                    ->placeholder('Все группы'),
-
-                TextColumn::make('deadline_at')
-                    ->label('Дедлайн')
-                    ->dateTime('d.m.Y')
-                    ->sortable(),
-
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->dateTime('d.m.Y')
