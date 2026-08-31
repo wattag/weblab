@@ -35,8 +35,8 @@ class DashboardController extends Controller
         $rejectedCount = $user->submissions()->where('status', SubmissionStatusEnum::Rejected)->count();
 
         // Базовый запрос для задач
-        $deadlineTasksQuery = Task::where('type', TaskTypeEnum::Practice)
-            ->whereIn('discipline_id', $disciplineIds) // <--- ОГРАНИЧЕНИЕ ПО ДИСЦИПЛИНАМ
+        $deadlineTasksQuery = Task::whereIn('type', [TaskTypeEnum::Practice, TaskTypeEnum::Lab, TaskTypeEnum::Assignment])
+            ->whereIn('discipline_id', $disciplineIds)
             ->where(function ($query) use ($user) {
                 $query->where('group_id', $user->group_id)
                     ->orWhereNull('group_id');
