@@ -22,20 +22,17 @@ class SubmissionsTable
                     ->badge()
                     ->sortable(),
 
-                TextColumn::make('user.name')
+                TextColumn::make('user.full_name')
                     ->label('Студент')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(['name', 'surname'])
+                    ->sortable(['name', 'surname']),
+
+                TextColumn::make('user.group.name')
+                    ->label('Группа'),
 
                 TextColumn::make('task.title')
                     ->label('Задание')
                     ->limit(30),
-
-                TextColumn::make('github_url')
-                    ->label('GitHub')
-                    ->copyable()
-                    ->copyMessage('Ссылка скопирована')
-                    ->limit(20),
 
                 TextColumn::make('grade')
                     ->label('Оценка')
