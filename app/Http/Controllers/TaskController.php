@@ -63,10 +63,10 @@ class TaskController extends Controller
         if ($task->submission_type === TaskSubmissionTypeEnum::Link) {
             $rules['github_url'] = ['required', 'url', 'max:255'];
         } elseif ($task->submission_type === TaskSubmissionTypeEnum::File) {
-            $rules['file'] = ['required', 'file', 'max:51200']; // 50MB
+            $rules['file'] = ['required', 'file', 'max:102400']; // 50MB
         } else {
             $rules['github_url'] = ['nullable', 'required_without:file', 'url', 'max:255'];
-            $rules['file'] = ['nullable', 'required_without:github_url', 'file', 'max:51200'];
+            $rules['file'] = ['nullable', 'required_without:github_url', 'file', 'max:102400'];
         }
 
         $request->validate($rules);

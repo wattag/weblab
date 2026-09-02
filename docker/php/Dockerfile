@@ -39,8 +39,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN groupadd -o -g ${GID} -r www
 RUN useradd -o -u ${UID} -ms /bin/bash -g www www
 
-RUN echo "upload_max_filesize = 50M" > /usr/local/etc/php/conf.d/uploads.ini
-RUN echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "upload_max_filesize = 100M" > /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "post_max_size = 110M" >> /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "max_input_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
 
 USER www
 
