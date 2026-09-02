@@ -33,7 +33,7 @@ enum TaskTypeEnum: int implements HasColor, HasLabel
             self::Manual => 'Инструкция',
             self::Practice => 'Практическая работа',
             self::Lab => 'Входной контроль',
-            self::Assignment => 'Домашнее задание',
+            self::Assignment => 'Самостоятельная работа',
         };
     }
 
