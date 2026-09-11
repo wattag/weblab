@@ -32,20 +32,22 @@ class SubmissionsTable
 
                 TextColumn::make('task.title')
                     ->label('Задание')
-                    ->limit(30),
+                    ->limit(30)
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('grade')
                     ->label('Оценка')
                     ->sortable(),
 
-                TextColumn::make('created_at')
-                    ->label('Дата сдачи')
-                    ->dateTime('d.m.Y')
+                TextColumn::make('task.deadline_at')
+                    ->label('Дедлайн')
+                    ->dateTime('d.m.Y H:i')
                     ->sortable(),
 
                 TextColumn::make('updated_at')
                     ->label('Дата изменения')
-                    ->dateTime('d.m.Y')
+                    ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
