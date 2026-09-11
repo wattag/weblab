@@ -22,7 +22,12 @@ class SubmissionForm
             ->components([
                 Section::make('Информация о сдаче')->schema([
                     Select::make('user_id')
-                        ->relationship('user', 'name')
+                        ->relationship(
+                            name: 'user',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn ($query) => $query->orderBy('name')->orderBy('surname'),
+                        )
+                        ->getOptionLabelFromRecordUsing(fn ($record) => trim("{$record->name} {$record->surname}"))
                         ->label('Студент')
                         ->disabled(),
 
