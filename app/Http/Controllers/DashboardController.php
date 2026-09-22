@@ -124,4 +124,30 @@ class DashboardController extends Controller
 
         return compact('tasks', 'disciplines');
     }
+
+    public function grades()
+    {
+        $user = Auth::user();
+
+        if ($user->role === UserRoleEnum::Teacher) {
+            return redirect()->to('/admin');
+        }
+
+        $disciplineIds = $this->getStudentDisciplineIds($user);
+
+        $tasks = Task::whereIn('type', [TaskTypeEnum::Practice, TaskTypeEnum::Lab, TaskTypeEnum::Assignment])
+            ->whereIn('discipline_id', $disciplineIds)
+            ->where(function ($query) use ($user) {
+                $query->where('group_id', $user->group_id)
+                    ->orWhereNull('group_id');
+            })
+            ->with(['submissions' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }, 'discipline'])
+            // Сортируем: сначала новые
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('grades', compact('tasks'));
+    }
 }
