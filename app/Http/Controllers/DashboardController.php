@@ -25,6 +25,9 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->role === UserRoleEnum::Teacher) {
+            return redirect()->route('teacher.gradebook');
+        }
+        if ($user->role === UserRoleEnum::Admin) {
             return redirect()->to('/admin');
         }
 

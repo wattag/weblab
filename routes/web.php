@@ -12,16 +12,7 @@ Route::get('/', static function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', static function () {
-        $user = auth()->user();
-        if ($user->role === UserRoleEnum::Teacher) {
-            return redirect()->route('teacher.gradebook');
-        }
-        if ($user->role === UserRoleEnum::Admin) {
-            return redirect()->to('/admin');
-        }
-        return redirect()->route('theory');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/teacher/gradebook', [TeacherController::class, 'gradebook'])->name('teacher.gradebook');
 
