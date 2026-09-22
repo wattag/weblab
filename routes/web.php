@@ -1,16 +1,31 @@
 <?php
 
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/', static function () {
     return view('welcome');
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', static function () {
+        $user = auth()->user();
+        if ($user->role === UserRoleEnum::Teacher) {
+            return redirect()->route('teacher.gradebook');
+        }
+        if ($user->role === UserRoleEnum::Admin) {
+            return redirect()->to('/admin');
+        }
+        return redirect()->route('theory');
+    })->name('dashboard');
+
+    Route::get('/teacher/gradebook', [TeacherController::class, 'gradebook'])->name('teacher.gradebook');
+
+    Route::get('/grades', [DashboardController::class, 'grades'])->name('grades');
     Route::get('/theory', [DashboardController::class, 'theory'])->name('theory');
     Route::get('/practice', [DashboardController::class, 'practice'])->name('practice');
 
