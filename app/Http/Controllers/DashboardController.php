@@ -37,7 +37,32 @@ class DashboardController extends Controller
         $pendingCount = $user->submissions()->where('status', SubmissionStatusEnum::Pending)->count();
         $rejectedCount = $user->submissions()->where('status', SubmissionStatusEnum::Rejected)->count();
 
-        // Базовый запрос для задач
+        $allPracticeTasks = Task::whereIn('type', [\App\Enums\TaskTypeEnum::Practice, \App\Enums\TaskTypeEnum::Lab, \App\Enums\TaskTypeEnum::Assignment])
+            ->whereIn('discipline_id', $disciplineIds)
+            ->where(function ($query) use ($user) {
+                $query->where('group_id', $user->group_id)
+                    ->orWhereNull('group_id');
+            })->get();
+
+        $userSubmissions = $user->submissions->keyBy('task_id');
+        $totalScore = 0;
+        $gradedCount = 0;
+
+        foreach ($allPracticeTasks as $task) {
+            $sub = $userSubmissions->get($task->id);
+            $isOverdue = $task->deadline_at && $task->deadline_at->isPast();
+
+            if ($sub && is_numeric($sub->grade)) {
+                $totalScore += $sub->grade;
+                $gradedCount++;
+            } elseif ($isOverdue && (!$sub || $sub->status === SubmissionStatusEnum::Rejected)) {
+                $totalScore += 2;
+                $gradedCount++;
+            }
+        }
+
+        $averageGrade = $gradedCount > 0 ? round($totalScore / $gradedCount, 2) : 0;
+
         $deadlineTasksQuery = Task::whereIn('type', [TaskTypeEnum::Practice, TaskTypeEnum::Lab, TaskTypeEnum::Assignment])
             ->whereIn('discipline_id', $disciplineIds)
             ->where(function ($query) use ($user) {
@@ -53,19 +78,10 @@ class DashboardController extends Controller
                     ]);
             });
 
-        $upcomingTasks = (clone $deadlineTasksQuery)
-            ->where('deadline_at', '>=', now())
-            ->orderBy('deadline_at', 'asc')
-            ->take(3)
-            ->get();
+        $upcomingTasks = (clone $deadlineTasksQuery)->where('deadline_at', '>=', now())->orderBy('deadline_at', 'asc')->take(3)->get();
+        $overdueTasks = (clone $deadlineTasksQuery)->where('deadline_at', '<', now())->orderBy('deadline_at', 'desc')->take(3)->get();
 
-        $overdueTasks = (clone $deadlineTasksQuery)
-            ->where('deadline_at', '<', now())
-            ->orderBy('deadline_at', 'desc')
-            ->take(3)
-            ->get();
-
-        return view('dashboard', compact('acceptedCount', 'pendingCount', 'rejectedCount', 'upcomingTasks', 'overdueTasks'));
+        return view('dashboard', compact('averageGrade', 'acceptedCount', 'pendingCount', 'rejectedCount', 'upcomingTasks', 'overdueTasks'));
     }
 
     public function theory(Request $request)

@@ -69,31 +69,44 @@
             <!-- МАТРИЦА (ЖУРНАЛ) -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 border-b-4 shadow-xl shadow-slate-900/5 relative">
 
-                <div class="overflow-x-auto rounded-3xl pb-2 custom-scrollbar">
-                    <table class="w-full text-left border-collapse min-w-max">
+                <div class="overflow-x-auto rounded-3xl pb-2 custom-scrollbar relative">
+                    <!-- Запрещаем таблице сжиматься меньше её реального размера -->
+                    <table class="w-full text-left border-collapse" style="min-width: max-content;">
                         <thead>
                         <tr>
-                            <th class="sticky left-0 z-20 bg-slate-50 dark:bg-slate-800/95 border-b-2 border-slate-200 dark:border-slate-700 px-6 py-5 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.1)]">
+                            <!-- Имя студента (Липкое слева) -->
+                            <th class="sticky left-0 z-30 bg-slate-50 dark:bg-slate-800 border-b-2 border-slate-200 dark:border-slate-700 px-6 py-5 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.1)]">
                                 <span class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Студент</span>
                             </th>
 
                             @foreach($tasks as $task)
-                                <th class="px-6 py-5 border-b-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 border-l border-slate-100 dark:border-slate-800/50 align-top min-w-[200px] max-w-[250px]">
+                                <!-- Задания (Задаем минимальную ширину, чтобы они не сжимались) -->
+                                <th class="px-4 py-5 border-b-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 border-l border-slate-100 dark:border-slate-800/50 align-top min-w-[160px] max-w-[200px]">
                                     <p class="text-xs font-black text-slate-400 mb-1 uppercase tracking-wider">{{ $task->deadline_at ? 'До ' . $task->deadline_at->format('d.m') : 'Без срока' }}</p>
                                     <p class="text-sm font-bold text-slate-800 dark:text-white line-clamp-2" title="{{ $task->title }}">
                                         {{ $task->title }}
                                     </p>
                                 </th>
                             @endforeach
+
+                            <!-- Средний балл (Липкое справа) -->
+                            <th class="sticky right-0 z-30 bg-violet-50 dark:bg-violet-900/20 border-b-2 border-violet-200 dark:border-violet-800/50 border-l-2 border-slate-200 dark:border-slate-700 px-6 py-5 shadow-[-4px_0_10px_-5px_rgba(0,0,0,0.1)]">
+                                <span class="text-xs font-black uppercase tracking-widest text-violet-600 dark:text-violet-400">Ср. балл</span>
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="divide-y-2 divide-slate-100 dark:divide-slate-800/50">
                         @foreach($students as $student)
+                            @php
+                                $totalScore = 0;
+                                $gradedTasksCount = 0;
+                            @endphp
+
                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 group">
                                 <!-- Имя студента -->
-                                <td class="sticky left-0 z-10 bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 px-6 py-4 font-bold text-slate-800 dark:text-white shadow-[4px_0_10px_-5px_rgba(0,0,0,0.1)] transition-colors">
+                                <td class="sticky left-0 z-20 bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 px-6 py-4 font-bold text-slate-800 dark:text-white shadow-[4px_0_10px_-5px_rgba(0,0,0,0.1)] transition-colors">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-black text-slate-500">
+                                        <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-black text-slate-500">
                                             {{ mb_substr($student->surname, 0, 1) }}{{ mb_substr($student->name, 0, 1) }}
                                         </div>
                                         <span class="whitespace-nowrap">{{ $student->surname }} {{ $student->name }}</span>
@@ -104,15 +117,23 @@
                                 @foreach($tasks as $task)
                                     @php
                                         $submission = $matrix[$student->id][$task->id] ?? null;
-                                        $isOverdue = !$submission && $task->deadline_at && $task->deadline_at->isPast();
+                                        $isOverdue = $task->deadline_at && $task->deadline_at->isPast();
+
+                                        if ($submission && is_numeric($submission->grade)) {
+                                            $totalScore += $submission->grade;
+                                            $gradedTasksCount++;
+                                        } elseif ($isOverdue && (!$submission || $submission->status === SubmissionStatusEnum::Rejected)) {
+                                            $totalScore += 2;
+                                            $gradedTasksCount++;
+                                        }
                                     @endphp
 
-                                    <td class="border-l border-slate-100 dark:border-slate-800/50 p-2 text-center transition-colors">
+                                    <td class="border-l border-slate-100 dark:border-slate-800/50 p-2 text-center transition-colors min-w-[160px]">
                                         @if($submission)
                                             @php
                                                 $editUrl = route('filament.admin.resources.submissions.edit', $submission->id);
                                             @endphp
-                                            <a href="{{ $editUrl }}" target="_blank" class="block w-full h-full rounded-xl p-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                            <a href="{{ $editUrl }}" target="_blank" class="flex items-center justify-center w-full h-full rounded-xl p-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                                 @if($submission->status === SubmissionStatusEnum::Pending)
                                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Проверить
@@ -130,7 +151,8 @@
                                         @else
                                             <div class="p-3">
                                                 @if($isOverdue)
-                                                    <span class="text-xs font-bold text-rose-500">Пропуск</span>
+                                                    <!-- Явно показываем, что пропуск = двойка -->
+                                                    <span class="text-sm font-black text-rose-500" title="Пропущено (Автоматическая двойка)">2</span>
                                                 @else
                                                     <span class="text-slate-300 dark:text-slate-600 font-bold">—</span>
                                                 @endif
@@ -138,6 +160,19 @@
                                         @endif
                                     </td>
                                 @endforeach
+
+                                @php
+                                    $avg = $gradedTasksCount > 0 ? round($totalScore / $gradedTasksCount, 2) : '—';
+
+                                    $avgColor = 'text-violet-600 dark:text-violet-400';
+                                    if ($avg !== '—') {
+                                        if ($avg < 3) $avgColor = 'text-rose-500';
+                                        elseif ($avg >= 4.5) $avgColor = 'text-emerald-500';
+                                    }
+                                @endphp
+                                <td class="sticky right-0 z-20 bg-violet-50 dark:bg-violet-900/10 border-l-2 border-slate-200 dark:border-slate-700 p-4 text-center shadow-[-4px_0_10px_-5px_rgba(0,0,0,0.1)]">
+                                    <span class="text-lg font-black {{ $avgColor }}">{{ $avg }}</span>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

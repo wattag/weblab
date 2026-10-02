@@ -72,8 +72,21 @@
 
         <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6">Прогресс обучения</h2>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <!-- СТАТИСТИКА (Bento Box) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
+            <!-- Средний балл (Новый блок) -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border-2 border-violet-200 dark:border-violet-900/50 border-b-4 p-6 flex items-center gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-900/10 transition-all cursor-default">
+                <div class="w-16 h-16 shrink-0 rounded-2xl bg-violet-100 dark:bg-violet-500/20 text-violet-500 border-2 border-violet-200 dark:border-violet-500/30 flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ср. балл</p>
+                    <p class="text-4xl font-black text-slate-800 dark:text-white mt-1">{{ $averageGrade ?: '—' }}</p>
+                </div>
+            </div>
+
+            <!-- Зачтено -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl border-2 border-emerald-200 dark:border-emerald-900/50 border-b-4 p-6 flex items-center gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-900/10 transition-all cursor-default">
                 <div class="w-16 h-16 shrink-0 rounded-2xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-500 border-2 border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
@@ -84,6 +97,7 @@
                 </div>
             </div>
 
+            <!-- На проверке -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl border-2 border-amber-200 dark:border-amber-900/50 border-b-4 p-6 flex items-center gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-900/10 transition-all cursor-default">
                 <div class="w-16 h-16 shrink-0 rounded-2xl bg-amber-100 dark:bg-amber-500/20 text-amber-500 border-2 border-amber-200 dark:border-amber-500/30 flex items-center justify-center">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -94,6 +108,7 @@
                 </div>
             </div>
 
+            <!-- Доработки -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl border-2 border-red-200 dark:border-red-900/50 border-b-4 p-6 flex items-center gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-red-900/10 transition-all cursor-default">
                 <div class="w-16 h-16 shrink-0 rounded-2xl bg-red-100 dark:bg-red-500/20 text-red-500 border-2 border-red-200 dark:border-red-500/30 flex items-center justify-center">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -103,7 +118,6 @@
                     <p class="text-4xl font-black text-slate-800 dark:text-white mt-1">{{ $rejectedCount }}</p>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection
